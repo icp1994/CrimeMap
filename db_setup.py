@@ -5,16 +5,18 @@ Created on April 21, 2016 at 17:53
 @author: carl
 """
 
+import contextlib
 import pymysql
 import dbconfig
 
 connection = pymysql.connect(host='localhost',
                              user=dbconfig.db_user,
-                             passwd=dbconfig.db_password)
+                             passwd=dbconfig.db_password
+                             )
 
 try:
-    with connection.cursor() as cursor:
-        sql = "CREATE DATABASE IF NOT EXISTS crimemap"
+    with contextlib.closing(connection.cursor()) as cursor:
+        sql = "CREATE DATABASE IF NOT EXISTS `crimemap`"
         cursor.execute(sql)
         sql = """CREATE TABLE IF NOT EXISTS crimemap.crimes (
         id int NOT NULL AUTO_INCREMENT,
