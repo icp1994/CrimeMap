@@ -1,5 +1,6 @@
+import json
 from dbhelper import DBHelper
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 DB = DBHelper()
@@ -7,34 +8,9 @@ DB = DBHelper()
 
 @app.route("/")
 def home():
-    try:
-        data = DB.get_all_inputs()
-    except Exception as e:
-        print(e)
-        data = None
+    crimes = json.dumps(DB.get_all_crimes())
 
-    return render_template("home.html", data=data)
-
-
-@app.route("/add", methods=["POST"])
-def add():
-    try:
-        data = request.form.get('userinput')
-        DB.add_input(data)
-    except Exception as e:
-        print(e)
-
-    return home()
-
-
-@app.route("/clear")
-def clear():
-    try:
-        DB.clear_all()
-    except Exception as e:
-        print(e)
-
-    return home()
+    return render_template("home.html", crimes=crimes)
 
 
 @app.route("/submitcrime", methods=["POST"])
@@ -45,12 +21,9 @@ def submitcrime():
     longitude = request.form.get('longitude')
     description = request.form.get('description')
 
-    try:
-        DB.add_crime(category, date, latitude, longitude, description)
-    except Exception as e:
-        print(e)
+    DB.add_crime(category, date, latitude, longitude, description)
 
-    return home()
+    return redirect("/")
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

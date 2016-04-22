@@ -1,4 +1,5 @@
 import contextlib
+import datetime
 import pymysql
 import dbconfig
 
@@ -12,23 +13,28 @@ class DBHelper:
                                passwd=dbconfig.db_password,
                                db=database)
 
-    def get_all_inputs(self):
+    def get_all_crimes(self):
         connection = self.connect()
         try:
-            query = "SELECT description FROM crimes;"
+            query = "SELECT category, date, latitude, longitude,\
+                    description FROM crimes;"
             with contextlib.closing(connection.cursor()) as cursor:
                 cursor.execute(query)
-            return cursor.fetchall()
-        finally:
-            connection.close()
+            named_crimes = []
+            for crime in cursor:
+                named_crime = {
+                    'category': crime[0],
+                    'date': datetime.datetime.strftime(
+                        crime[1], '%Y-%m-%d'),
+                    'latitude': crime[2],
+                    'longitude': crime[3],
+                    'description': crime[4]
+                }
+                named_crimes.append(named_crime)
 
-    def add_input(self, data):
-        connection = self.connect()
-        try:
-            query = "INSERT INTO crimes (description) VALUES (%s);"
-            with contextlib.closing(connection.cursor()) as cursor:
-                cursor.execute(query, data)
-                connection.commit()
+            return named_crimes
+        except Exception as e:
+            print(e)
         finally:
             connection.close()
 
@@ -42,6 +48,8 @@ class DBHelper:
                 cursor.execute(query, (
                     category, date, latitude, longitude, description))
                 connection.commit()
+        except Exception as e:
+            print(e)
         finally:
             connection.close()
 
@@ -52,5 +60,7 @@ class DBHelper:
             with contextlib.closing(connection.cursor()) as cursor:
                 cursor.execute(query)
                 connection.commit()
+        except Exception as e:
+            print(e)
         finally:
             connection.close()
