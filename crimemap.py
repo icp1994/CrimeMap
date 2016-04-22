@@ -36,5 +36,21 @@ def clear():
 
     return home()
 
+
+@app.route("/submitcrime", methods=["POST"])
+def submitcrime():
+    category = request.form.get('category')
+    date = request.form.get('date')
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
+    description = request.form.get('description')
+
+    try:
+        DB.add_crime(category, date, latitude, longitude, description)
+    except Exception as e:
+        print(e)
+
+    return home()
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
