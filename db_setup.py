@@ -16,7 +16,7 @@ connection = pymysql.connect(host='localhost',
 
 try:
     with contextlib.closing(connection.cursor()) as cursor:
-        sql = "CREATE DATABASE IF NOT EXISTS `crimemap`"
+        sql = "CREATE DATABASE IF NOT EXISTS crimemap;"
         cursor.execute(sql)
         sql = """CREATE TABLE IF NOT EXISTS crimemap.crimes (
         id int NOT NULL AUTO_INCREMENT,
