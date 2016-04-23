@@ -24,6 +24,10 @@ input[type="submit"]:hover {
     background: steelblue;
 }
 
+#error {
+    color: red;
+}
+
 #map-canvas {
     width: 70%;
     height: 500px;
